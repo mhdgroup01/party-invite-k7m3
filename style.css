@@ -41,6 +41,22 @@ h1 span{color:var(--title-accent)}
 .primary:active{transform:translate(var(--offset-press),var(--offset-press));box-shadow:var(--offset-press) var(--offset-press) 0 var(--comic-stroke)}
 .secondary{background:transparent;border:0;color:var(--body-ink);font:700 var(--size-copy)/var(--leading-body) var(--font-copy)}
 .status{font-size:var(--size-copy);border-inline-start:var(--keyline) solid var(--title-accent);padding-inline-start:var(--space-3)}
+.compass-panel{grid-column:1/-1;border-block-start:var(--offset-press) solid var(--body-muted);padding-block-start:var(--space-4);scroll-margin-block-end:var(--space-3)}
+.compass-panel h2{margin:0 0 var(--space-3);font-size:var(--text-xl);color:var(--title-accent)}
+.compass-reading{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-4)}
+.dial{display:block;width:clamp(calc(var(--space-7) + var(--space-4)),40%,calc(var(--space-7) + var(--space-6)));flex:none;overflow:visible}
+.dial-face,.needle-tail{fill:var(--tag-paper);stroke:var(--tag-ink);stroke-width:3}
+.dial-ticks,.dial-lines{fill:none;stroke:var(--tag-ink)}
+.dial-ticks{stroke-width:4}
+.dial-lines{opacity:.25}
+.dial-letters{font:700 var(--text-lg) var(--font-mono);fill:var(--tag-ink)}
+.needle-tip{fill:var(--action-fill);stroke:var(--tag-ink);stroke-width:2;stroke-linejoin:round}
+.dial-hub{fill:var(--tag-ink)}
+.compass-values{flex:1 1 calc(var(--space-7) + var(--space-6));min-width:0}
+.compass-values p{margin:0;overflow-wrap:anywhere}
+#bearing{color:var(--body-ink);font-size:var(--text-lg);font-weight:700}
+#compass-mode{margin-block-start:var(--space-2);font-size:var(--text-sm);color:var(--body-muted)}
+#enable-heading{padding-inline:0;text-decoration:underline;text-underline-offset:.2em}
 @media(max-width:47rem){.shell{padding-inline:var(--space-4)}.masthead{min-height:calc(var(--space-6) + var(--space-3))}.cover{aspect-ratio:var(--cover-ratio-mobile)}.hero{right:-1%;height:94%}.invitation{grid-template-columns:1fr;gap:var(--space-4);padding:var(--space-4)}.lettering{left:5%}.kicker{margin-bottom:var(--space-2)}.replay{bottom:var(--space-2);right:var(--space-2)}}
 @media(max-width:25rem){.shell{padding-inline:var(--space-3)}.brand img{width:calc(var(--space-5) - var(--space-1))}.cover-title{font-size:min(var(--size-poster),16cqw)}.map-link{font-size:var(--text-sm)}.lettering{left:4%}.invitation{padding:var(--space-4) var(--space-3)}.replay{bottom:var(--space-1);right:var(--space-1)}}
 @media(prefers-reduced-motion:reduce){.hero.swing{animation:none}.replay{display:none}.replay:hover{transform:none}}
