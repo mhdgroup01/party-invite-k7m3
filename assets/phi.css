@@ -1,0 +1,297 @@
+/* ============================================================
+   Phi (φ) — Natural-Geometry Design System  v2
+   ทุกค่ามาจากกติกาเดียว: อัตราส่วนทองคำ φ = 1.618 และฟีโบนัชชี
+   ออกแบบให้ "สวยตามธรรมชาติ" + "เหมาะกับทุกคน" (accessible)
+
+   v2: 8 color families × 10 shades, 2-layer tokens (global + alias),
+       fluid typography with clamp(), expanded component support
+   ============================================================ */
+
+:root {
+  /* ================================================================
+     LAYER 1 — GLOBAL TOKENS (ค่าดิบ ไม่ขึ้นกับบริบท)
+     ================================================================ */
+
+  --phi: 1.618;
+
+  /* --- Fluid type scale: base 16px, clamp() ปรับตามจอ ---
+     heading ใช้ φ เต็ม, body ใช้สเกลผ่อน 1.25 เพื่ออ่านง่าย
+     min = มือถือ 375px, max = desktop 1280px */
+  --text-xs:   clamp(11px, 0.65rem + 0.1vw, 12px);
+  --text-sm:   clamp(13px, 0.75rem + 0.15vw, 14px);
+  --text-base: clamp(15px, 0.875rem + 0.2vw, 16px);
+  --text-lg:   clamp(18px, 1rem + 0.35vw, 20px);
+  --text-xl:   clamp(22px, 1.15rem + 0.7vw, 26px);
+  --text-2xl:  clamp(30px, 1.4rem + 1.5vw, 42px);
+  --text-3xl:  clamp(40px, 1.8rem + 2.8vw, 68px);
+
+  --leading-tight:   1.2;
+  --leading-body:    1.618;  /* φ เป็น line-height → เหมาะกับไทย (สระ/วรรณยุกต์ซ้อน) */
+  --leading-display: 1.08;   /* heading ใหญ่: แน่นกว่า body ให้ดู deliberate */
+
+  /* --- Optical letter-spacing (tracking) — ปรับตามขนาด (แบบ Apple/Linear/Stripe) ---
+     display ใหญ่ → ลบ (แน่น เนี้ยบ); label เล็ก/uppercase → บวก (โปร่ง อ่านง่าย).
+     ใช้กับ "หัวเรื่อง/label" เป็นหลัก — ไม่ใช้กับ body (โดยเฉพาะไทยยาว ๆ) */
+  --tracking-display: -0.02em;
+  --tracking-tight:   -0.012em;
+  --tracking-normal:  0em;
+  --tracking-wide:    0.04em;
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+
+  /* --- Spacing: ฟีโบนัชชี ปัดเข้า 4px grid --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 20px;
+  --space-5: 32px;
+  --space-6: 52px;
+  --space-7: 84px;
+
+  /* radius — ฟีโบนัชชี → self-similar (อัตราส่วน ≈ φ) กฎเดียวกับ spacing */
+  --radius-sm:   8px;   /* badge · chip · input · เมนู */
+  --radius-md:   13px;  /* การ์ดเล็ก · dropdown */
+  --radius-lg:   21px;  /* การ์ด · modal */
+  --radius-full: 999px; /* ปุ่ม · avatar · pill */
+
+  --ratio-minor: 0.382;
+  --ratio-major: 0.618;
+
+  --touch-min: 44px;
+
+  /* --- 8 color families × 10 shades (ธรรมชาติ) ---
+     ชื่อจากธรรมชาติ: forest, sky, ocean, dawn, sun, berry, ember, earth */
+
+  /* forest (ป่า — primary accent) */
+  --forest-50:  #eef5f0; --forest-100: #d5e8da; --forest-200: #b0d4ba;
+  --forest-300: #82bc96; --forest-400: #5aa374; --forest-500: #3e6b52;
+  --forest-600: #2f5644; --forest-700: #234136; --forest-800: #1a302a;
+  --forest-900: #101f1c;
+
+  /* sky (ท้องฟ้า — info) */
+  --sky-50:  #edf5fc; --sky-100: #d3e7f8; --sky-200: #a8d0f2;
+  --sky-300: #6fb4e8; --sky-400: #3e96db; --sky-500: #2670b3;
+  --sky-600: #1d5a94; --sky-700: #164574; --sky-800: #103255;
+  --sky-900: #0b2038;
+
+  /* ocean (มหาสมุทร — teal) */
+  --ocean-50:  #ecf7f6; --ocean-100: #d0edea; --ocean-200: #a3dbd5;
+  --ocean-300: #6cc4bb; --ocean-400: #40a89e; --ocean-500: #2d7a73;
+  --ocean-600: #23615c; --ocean-700: #1b4a47; --ocean-800: #143634;
+  --ocean-900: #0d2322;
+
+  /* dawn (แสงเช้า — highlight/warning) */
+  --dawn-50:  #fdf4ec; --dawn-100: #f6ece1; --dawn-200: #edd5be;
+  --dawn-300: #e2b78e; --dawn-400: #d69a5e; --dawn-500: #c4773a;
+  --dawn-600: #a5602c; --dawn-700: #7e4921; --dawn-800: #5a3418;
+  --dawn-900: #38210f;
+
+  /* sun (แสงแดด — warning bright) */
+  --sun-50:  #fefaec; --sun-100: #fdf2cc; --sun-200: #fae498;
+  --sun-300: #f5d054; --sun-400: #e8b818; --sun-500: #c49810;
+  --sun-600: #9e790d; --sun-700: #775b0a; --sun-800: #523f07;
+  --sun-900: #312604;
+
+  /* berry (ผลไม้ป่า — creative/purple) */
+  --berry-50:  #f5eef8; --berry-100: #e8d8f0; --berry-200: #d2b3e2;
+  --berry-300: #b586d0; --berry-400: #9a5ebe; --berry-500: #7a3fa2;
+  --berry-600: #623285; --berry-700: #4b2666; --berry-800: #361b4a;
+  --berry-900: #22112f;
+
+  /* ember (ถ่านแดง — danger/error) */
+  --ember-50:  #fdf0ee; --ember-100: #f9d8d3; --ember-200: #f2b0a6;
+  --ember-300: #e8806f; --ember-400: #dc5642; --ember-500: #c03a27;
+  --ember-600: #9e2e1f; --ember-700: #7a2318; --ember-800: #581912;
+  --ember-900: #38100b;
+
+  /* earth (ดิน — neutral warm) */
+  --earth-50:  #faf8f5; --earth-100: #f1ede7; --earth-200: #e2dbd1;
+  --earth-300: #ccc2b4; --earth-400: #b3a594; --earth-500: #9a9186;
+  --earth-600: #7c7468; --earth-700: #6b6258; --earth-800: #4a4339;
+  --earth-900: #1f1b16;
+
+  /* ================================================================
+     LAYER 2 — ALIAS TOKENS (บทบาท/ความหมาย ใช้ในคอมโพเนนต์)
+     แก้ alias → เปลี่ยนความหมายทั้งระบบโดยไม่ต้องแก้คอมโพเนนต์
+     ================================================================ */
+
+  /* surfaces */
+  --bg-page:       var(--earth-50);
+  --bg-surface:    #ffffff;
+  --bg-sunken:     var(--earth-100);
+  --bg-elevated:   #ffffff;
+
+  /* text */
+  --text-primary:   var(--earth-900);
+  --text-secondary: var(--earth-700);
+  --text-tertiary:  var(--earth-500);
+  --text-inverse:   var(--earth-50);
+
+  /* borders */
+  --border:        rgba(31, 27, 22, 0.12);
+  --border-strong: rgba(31, 27, 22, 0.22);
+
+  /* interactive — primary (forest) */
+  --interactive:      var(--forest-500);
+  --interactive-text: var(--forest-600);
+  --interactive-soft: var(--forest-50);
+  --interactive-hover:var(--forest-600);
+  --interactive-active:var(--forest-700);
+
+  /* semantic: success (forest) */
+  --success:      var(--forest-500);
+  --success-text: var(--forest-700);
+  --success-soft: var(--forest-50);
+
+  /* semantic: info (sky) */
+  --info:      var(--sky-500);
+  --info-text: var(--sky-700);
+  --info-soft: var(--sky-50);
+
+  /* semantic: warning (sun) */
+  --warning:      var(--sun-500);
+  --warning-text: var(--sun-800);
+  --warning-soft: var(--sun-50);
+
+  /* semantic: danger (ember) */
+  --danger:      var(--ember-500);
+  --danger-text: var(--ember-700);
+  --danger-soft: var(--ember-50);
+
+  /* backward compat aliases */
+  --accent:       var(--interactive);
+  --accent-text:  var(--interactive-text);
+  --accent-soft:  var(--interactive-soft);
+  --highlight:    var(--dawn-500);
+  --highlight-soft:var(--dawn-100);
+
+  /* shadows — เงาในธรรมชาติอมโทนเย็น, 2 ชั้น (ambient + key light) ให้ depth สมจริง */
+  --shadow-1: 0 1px 1px rgba(40, 50, 70, 0.04), 0 1px 2px rgba(40, 50, 70, 0.06);
+  --shadow-2: 0 1px 2px rgba(40, 50, 70, 0.05), 0 6px 16px rgba(40, 50, 70, 0.10);
+  --shadow-3: 0 2px 6px rgba(40, 50, 70, 0.06), 0 16px 40px rgba(40, 50, 70, 0.16);
+
+  /* motion */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 400ms;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+
+  /* z-index scale */
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+}
+
+/* ================================================================
+   DARK MODE — ทุกสีต้อง contrast ผ่าน AA ในทั้งสองโหมด
+   ================================================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-page:      #111110;
+    --bg-surface:   #1c1b19;
+    --bg-sunken:    #0c0c0a;
+    --bg-elevated:  #252420;
+    --text-primary:   var(--earth-50);
+    --text-secondary: #b3aa9d;
+    --text-tertiary:  var(--earth-600);
+    --text-inverse:   var(--earth-900);
+    --border:        rgba(242, 238, 230, 0.10);
+    --border-strong: rgba(242, 238, 230, 0.20);
+
+    --interactive:       var(--forest-400);
+    --interactive-text:  var(--forest-300);
+    --interactive-soft:  #1a2e22;
+    --interactive-hover: var(--forest-300);
+    --interactive-active:var(--forest-200);
+
+    --success:      var(--forest-400);
+    --success-text: var(--forest-200);
+    --success-soft: #1a2e22;
+    --info:         var(--sky-400);
+    --info-text:    var(--sky-200);
+    --info-soft:    #142535;
+    --warning:      var(--sun-400);
+    --warning-text: var(--sun-200);
+    --warning-soft: #2a2210;
+    --danger:       var(--ember-400);
+    --danger-text:  var(--ember-200);
+    --danger-soft:  #2e1812;
+
+    --highlight:    var(--dawn-400);
+    --highlight-soft:#2e2419;
+
+    --shadow-1: 0 1px 1px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-2: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 16px rgba(0, 0, 0, 0.55);
+    --shadow-3: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 40px rgba(0, 0, 0, 0.65);
+  }
+}
+:root[data-theme="dark"] {
+  --bg-page:      #111110;
+  --bg-surface:   #1c1b19;
+  --bg-sunken:    #0c0c0a;
+  --bg-elevated:  #252420;
+  --text-primary:   var(--earth-50);
+  --text-secondary: #b3aa9d;
+  --text-tertiary:  var(--earth-600);
+  --text-inverse:   var(--earth-900);
+  --border:        rgba(242, 238, 230, 0.10);
+  --border-strong: rgba(242, 238, 230, 0.20);
+
+  --interactive:       var(--forest-400);
+  --interactive-text:  var(--forest-300);
+  --interactive-soft:  #1a2e22;
+  --interactive-hover: var(--forest-300);
+  --interactive-active:var(--forest-200);
+
+  --success:      var(--forest-400);
+  --success-text: var(--forest-200);
+  --success-soft: #1a2e22;
+  --info:         var(--sky-400);
+  --info-text:    var(--sky-200);
+  --info-soft:    #142535;
+  --warning:      var(--sun-400);
+  --warning-text: var(--sun-200);
+  --warning-soft: #2a2210;
+  --danger:       var(--ember-400);
+  --danger-text:  var(--ember-200);
+  --danger-soft:  #2e1812;
+
+  --highlight:    var(--dawn-400);
+  --highlight-soft:#2e2419;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-3: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* --- keyframes --- */
+@keyframes phi-pop {
+  from { transform: scale(0.94); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+@keyframes phi-slide-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes phi-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* --- reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+  *, *::before, *::after { animation-duration: 0.001ms !important; }
+}

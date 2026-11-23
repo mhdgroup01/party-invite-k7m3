@@ -1,0 +1,80 @@
+:root {
+  --paper: #fff7e7;
+  --ink: #13263b;
+  --red: #bb2638;
+  --red-hover: #992137;
+  --gold: #ffd063;
+  --milk: #fff9e9;
+  --canvas: #f7f1e4;
+  --muted: #485460;
+  --outline: #1a2638;
+  --night-paper: #1d293b;
+  --night-ink: #fff4dc;
+  --night-canvas: #101b2b;
+  --night-muted: #c7ccd3;
+  --night-accent: #ffac89;
+  --sky: #62aec9;
+  --night-gold: #ffde84;
+  --grain: #bfb398;
+  --poster-font: "Cover", Impact, sans-serif;
+  --body-font: "Lao", "Noto Sans Lao", sans-serif;
+  --display-size: clamp(4rem, 15.5cqw, 11.5rem);
+  --section-size: clamp(2rem, 3.3vw, 3.35rem);
+  --brand-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  --body-size: clamp(1rem, 1.4vw, 1.125rem);
+  --max-width: 70rem;
+  --poster-ratio: 2.72;
+  --mobile-poster-ratio: 1.48;
+  --border-width: 3px;
+  --icon-size: 1.4em;
+  --swing-time: 1950ms;
+  --pressed: 2px;
+  --page-paper: var(--canvas);
+  --body-ink: var(--ink);
+  --panel-paper: var(--paper);
+  --action-fill: var(--red);
+  --action-hover: var(--red-hover);
+  --action-ink: var(--milk);
+  --title-accent: var(--red);
+  --body-muted: var(--muted);
+  --comic-stroke: var(--outline);
+  --tag-paper: var(--gold);
+  --tag-ink: var(--ink);
+  --letter-ink: var(--milk);
+  --sky-fill: var(--sky);
+  --grain-ink: var(--grain);
+  --focus-ink: var(--red);
+  --font-cover: var(--poster-font);
+  --font-copy: var(--body-font);
+  --size-poster: var(--display-size);
+  --size-event: var(--section-size);
+  --size-brand: var(--brand-size);
+  --size-copy: var(--body-size);
+  --page-limit: var(--max-width);
+  --cover-ratio: var(--poster-ratio);
+  --cover-ratio-mobile: var(--mobile-poster-ratio);
+  --keyline: var(--border-width);
+  --icon: var(--icon-size);
+  --motion-swing: var(--swing-time);
+  --offset-press: var(--pressed);
+}
+@media (prefers-color-scheme: dark) {
+ :root:not([data-theme="light"]) {
+  --page-paper: var(--night-canvas);
+  --panel-paper: var(--night-paper);
+  --body-ink: var(--night-ink);
+  --body-muted: var(--night-muted);
+  --title-accent: var(--night-accent);
+  --focus-ink: var(--night-gold);
+  --grain-ink: var(--night-paper);
+ }
+}
+[data-theme="dark"] {
+  --page-paper: var(--night-canvas);
+  --panel-paper: var(--night-paper);
+  --body-ink: var(--night-ink);
+  --body-muted: var(--night-muted);
+  --title-accent: var(--night-accent);
+  --focus-ink: var(--night-gold);
+  --grain-ink: var(--night-paper);
+}
