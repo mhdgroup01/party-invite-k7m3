@@ -12,7 +12,7 @@
   <link rel="preload" href="assets/cover.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="assets/phi.css">
   <link rel="stylesheet" href="assets/tokens.css">
-  <link rel="stylesheet" href="style.css?v=auto-heading">
+  <link rel="stylesheet" href="style.css?v=motion-button">
 </head>
 <body>
   <svg aria-hidden="true" class="symbols" xmlns="http://www.w3.org/2000/svg">
@@ -38,7 +38,13 @@
               </g>
               <path class="arrival-mark" d="m-61 3 39 39 82-85"/>
             </svg>
-            <button id="enable-heading" type="button" aria-label="ແຕະລູກສອນເພື່ອອະນຸຍາດໃຫ້ໝຸນຕາມມືຖື" hidden></button>
+            <button id="enable-heading" type="button" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="4" width="8" height="16" rx="2" transform="rotate(15 12 12)"/><path d="M2 12a10 10 0 0 1 4-8M2 6v6h4m16 0a10 10 0 0 1-4 8m4-2v-6h-4"/></svg>
+              <span>
+                <strong>ແຕະເພື່ອໃຫ້ລູກສອນໝຸນ</strong>
+                <small>ແລ້ວເລືອກ ອະນຸຍາດ (<span lang="en">Allow</span>)</small>
+              </span>
+            </button>
           </div>
           <div class="guide-reading" role="status" aria-atomic="true">
             <p id="location-status">ເປີດ Google Maps ເພື່ອໄປງານ.</p>
@@ -68,6 +74,6 @@
       </section>
     </main>
   </div>
-  <script src="app.js?v=auto-heading" defer></script>
+  <script src="app.js?v=motion-button" defer></script>
 </body>
 </html>

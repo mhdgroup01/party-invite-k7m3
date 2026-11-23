@@ -69,10 +69,8 @@ function drawArrow() {
     mode = 'ຍັງບໍ່ໄດ້ອະນຸຍາດໃຫ້ໃຊ້ທິດຂອງມືຖື. ' + mode;
   } else if (heading === null && motionPermission === 'granted') {
     mode = 'ຖືມືຖືໃຫ້ຮາບເພື່ອລໍຖ້າສັນຍານທິດ. ' + mode;
-  } else if (needsTap) {
-    mode += motionPermission === 'retry'
-      ? ' ແຕະລູກສອນອີກຄັ້ງເພື່ອເປີດການໝຸນ.'
-      : ' ແຕະລູກສອນເພື່ອອະນຸຍາດໃຫ້ໝຸນຕາມມືຖື.';
+  } else if (needsTap && motionPermission === 'retry') {
+    mode += ' ລອງແຕະປຸ່ມອີກຄັ້ງເພື່ອໃຫ້ລູກສອນໝຸນ.';
   }
   if (modeLine.textContent !== mode) modeLine.textContent = mode;
   enableHeading.hidden = !needsTap;
@@ -93,7 +91,9 @@ async function requestHeading(fromTap) {
   }
   drawArrow();
 }
-enableHeading.addEventListener('click', () => requestHeading(true));
+stage.addEventListener('click', () => {
+  if (!enableHeading.hidden) requestHeading(true);
+});
 
 function onOrientation(event) {
   if (Number.isFinite(event.webkitCompassHeading) && event.webkitCompassHeading >= 0
