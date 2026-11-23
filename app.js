@@ -63,33 +63,37 @@ function drawArrow() {
   const reference = heading === null ? (course ?? 0) : heading + screenAngle;
   arrow.setAttribute('transform', 'rotate(' + wrap(bearing - reference) + ')');
   let mode = heading !== null ? phoneUp : course !== null ? courseUp : northUp;
+  const needsTap = canAskForHeading && heading === null
+    && (motionPermission === 'prompt' || motionPermission === 'retry');
   if (heading === null && motionPermission === 'denied') {
     mode = 'ຍັງບໍ່ໄດ້ອະນຸຍາດໃຫ້ໃຊ້ທິດຂອງມືຖື. ' + mode;
   } else if (heading === null && motionPermission === 'granted') {
     mode = 'ຖືມືຖືໃຫ້ຮາບເພື່ອລໍຖ້າສັນຍານທິດ. ' + mode;
-  } else if (heading === null && motionPermission === 'retry') {
-    mode = 'ຍັງເປີດການໝຸນຕາມມືຖືບໍ່ໄດ້. ລອງກົດອີກຄັ້ງ. ' + mode;
+  } else if (needsTap) {
+    mode += motionPermission === 'retry'
+      ? ' ແຕະລູກສອນອີກຄັ້ງເພື່ອເປີດການໝຸນ.'
+      : ' ແຕະລູກສອນເພື່ອອະນຸຍາດໃຫ້ໝຸນຕາມມືຖື.';
   }
   if (modeLine.textContent !== mode) modeLine.textContent = mode;
-  enableHeading.disabled = motionPermission === 'requesting';
-  enableHeading.hidden = !canAskForHeading || heading !== null
-    || motionPermission === 'granted' || motionPermission === 'denied';
+  enableHeading.hidden = !needsTap;
 }
 
-enableHeading.addEventListener('click', async () => {
+async function requestHeading(fromTap) {
   const session = trackingSession;
-  enableHeading.disabled = true;
   motionPermission = 'requesting';
+  enableHeading.hidden = true;
   try {
     const result = await window.DeviceOrientationEvent.requestPermission(true);
     if (session !== trackingSession) return;
     motionPermission = result === 'granted' ? 'granted' : 'denied';
   } catch {
     if (session !== trackingSession) return;
-    motionPermission = 'retry';
+    // หากยังไม่เคยอนุญาต Safari จะให้ขอสิทธิ์อีกครั้งจากการแตะของผู้ใช้
+    motionPermission = fromTap ? 'retry' : 'prompt';
   }
   drawArrow();
-});
+}
+enableHeading.addEventListener('click', () => requestHeading(true));
 
 function onOrientation(event) {
   if (Number.isFinite(event.webkitCompassHeading) && event.webkitCompassHeading >= 0
@@ -179,6 +183,7 @@ function startNavigation() {
   const session = ++trackingSession;
   showStatus(waiting);
   listenForHeading();
+  if (canAskForHeading && !navigator.userActivation?.isActive) requestHeading(false);
   tracker = navigator.geolocation.watchPosition(position => {
     if (session === trackingSession) updatePosition(position);
   }, error => {

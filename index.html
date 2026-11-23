@@ -12,7 +12,7 @@
   <link rel="preload" href="assets/cover.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="assets/phi.css">
   <link rel="stylesheet" href="assets/tokens.css">
-  <link rel="stylesheet" href="style.css?v=phone-heading">
+  <link rel="stylesheet" href="style.css?v=auto-heading">
 </head>
 <body>
   <svg aria-hidden="true" class="symbols" xmlns="http://www.w3.org/2000/svg">
@@ -29,8 +29,8 @@
       <div class="lead">
         <section class="guidance" aria-labelledby="guide-title">
           <h2 id="guide-title">ລູກສອນນຳທາງໄປງານ</h2>
-          <div id="arrow-stage" class="arrow-stage" data-state="waiting" aria-hidden="true">
-            <svg viewBox="-100 -100 200 200" focusable="false">
+          <div id="arrow-stage" class="arrow-stage" data-state="waiting">
+            <svg viewBox="-100 -100 200 200" focusable="false" aria-hidden="true">
               <g id="route-arrow" transform="rotate(32)">
                 <path class="arrow-shape" d="M0-85 70-8 30-14 30 68-30 68-30-14-70-8Z"/>
                 <path class="arrow-facet" d="M0-79 64-12 26-18 26 64 4 64 4-27Z"/>
@@ -38,6 +38,7 @@
               </g>
               <path class="arrival-mark" d="m-61 3 39 39 82-85"/>
             </svg>
+            <button id="enable-heading" type="button" aria-label="ແຕະລູກສອນເພື່ອອະນຸຍາດໃຫ້ໝຸນຕາມມືຖື" hidden></button>
           </div>
           <div class="guide-reading" role="status" aria-atomic="true">
             <p id="location-status">ເປີດ Google Maps ເພື່ອໄປງານ.</p>
@@ -47,7 +48,6 @@
             </div>
           </div>
           <p id="route-mode" role="status" hidden></p>
-          <button type="button" id="enable-heading" hidden>ໃຫ້ລູກສອນໝຸນຕາມມືຖື</button>
           <a id="directions" class="primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=17.9152293%2C102.637614&amp;dir_action=navigate"><svg aria-hidden="true"><use href="#direction"/></svg>ນຳທາງດ້ວຍ Google Maps</a>
         </section>
         <div class="cover" role="group" aria-label="Spider-Man ໂຫນໃຍຂ້າມເມືອງມາຮັບແຂກ">
@@ -68,6 +68,6 @@
       </section>
     </main>
   </div>
-  <script src="app.js?v=phone-heading" defer></script>
+  <script src="app.js?v=auto-heading" defer></script>
 </body>
 </html>
