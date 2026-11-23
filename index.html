@@ -12,7 +12,7 @@
   <link rel="preload" href="assets/cover.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="assets/phi.css">
   <link rel="stylesheet" href="assets/tokens.css">
-  <link rel="stylesheet" href="style.css?v=food-button">
+  <link rel="stylesheet" href="style.css?v=guide-actions">
 </head>
 <body>
   <svg aria-hidden="true" class="symbols" xmlns="http://www.w3.org/2000/svg">
@@ -23,13 +23,7 @@
   <div class="shell">
     <header class="masthead">
       <div class="brand"><img src="assets/mask.svg" alt="" width="34" height="39"><span lang="en">MAHASOK <b>BIRTHDAY</b></span></div>
-      <nav class="guest-links" aria-label="ເມນູຫຼັກ">
-        <a class="map-link food-link" href="menu.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 3v5a3 3 0 0 0 6 0V3M7 3v18m12 0V3c-3 1-5 5-5 10h5"/></svg>
-          ເມນູອາຫານ
-        </a>
-        <a class="map-link" href="https://maps.app.goo.gl/yUSR7DZM5DNzTeFH8"><svg aria-hidden="true"><use href="#pin"/></svg>ເບິ່ງໝຸດງານ</a>
-      </nav>
+      <a class="map-link" href="https://maps.app.goo.gl/yUSR7DZM5DNzTeFH8"><svg aria-hidden="true"><use href="#pin"/></svg>ເບິ່ງໝຸດງານ</a>
     </header>
     <main>
       <div class="lead">
@@ -60,7 +54,16 @@
             </div>
           </div>
           <p id="route-mode" role="status" hidden></p>
-          <a id="directions" class="primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=17.9152293%2C102.637614&amp;dir_action=navigate"><svg aria-hidden="true"><use href="#direction"/></svg>ນຳທາງດ້ວຍ Google Maps</a>
+          <nav class="guide-actions" aria-label="ຂໍ້ມູນງານວັນເກີດ">
+            <a id="directions" class="primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=17.9152293%2C102.637614&amp;dir_action=navigate">
+              <svg aria-hidden="true"><use href="#direction"/></svg>
+              <span>ນຳທາງດ້ວຍ <span lang="en">Google Maps</span></span>
+            </a>
+            <a class="primary food-link" href="menu.html">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 3v5a3 3 0 0 0 6 0V3M7 3v18m12 0V3c-3 1-5 5-5 10h5"/></svg>
+              <span>ເມນູອາຫານ</span>
+            </a>
+          </nav>
         </section>
         <div class="cover" role="group" aria-label="Spider-Man ໂຫນໃຍຂ້າມເມືອງມາຮັບແຂກ">
           <div class="lettering">
