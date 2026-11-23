@@ -12,7 +12,7 @@
   <link rel="preload" href="assets/cover.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="assets/phi.css">
   <link rel="stylesheet" href="assets/tokens.css">
-  <link rel="stylesheet" href="style.css?v=live-arrow">
+  <link rel="stylesheet" href="style.css?v=phone-heading">
 </head>
 <body>
   <svg aria-hidden="true" class="symbols" xmlns="http://www.w3.org/2000/svg">
@@ -46,7 +46,8 @@
               <p id="bearing"></p>
             </div>
           </div>
-          <p id="route-mode" hidden></p>
+          <p id="route-mode" role="status" hidden></p>
+          <button type="button" id="enable-heading" hidden>ໃຫ້ລູກສອນໝຸນຕາມມືຖື</button>
           <a id="directions" class="primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=17.9152293%2C102.637614&amp;dir_action=navigate"><svg aria-hidden="true"><use href="#direction"/></svg>ນຳທາງດ້ວຍ Google Maps</a>
         </section>
         <div class="cover" role="group" aria-label="Spider-Man ໂຫນໃຍຂ້າມເມືອງມາຮັບແຂກ">
@@ -67,6 +68,6 @@
       </section>
     </main>
   </div>
-  <script src="app.js?v=live-arrow" defer></script>
+  <script src="app.js?v=phone-heading" defer></script>
 </body>
 </html>

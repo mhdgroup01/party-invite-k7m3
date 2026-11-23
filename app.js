@@ -16,6 +16,7 @@ const arrow = document.querySelector('#route-arrow');
 const reading = document.querySelector('#route-reading');
 const statusLine = document.querySelector('#location-status');
 const modeLine = document.querySelector('#route-mode');
+const enableHeading = document.querySelector('#enable-heading');
 const bearingLine = document.querySelector('#bearing');
 const distanceLine = document.querySelector('#distance');
 
@@ -34,6 +35,9 @@ let trackingSession = 0;
 let bearing = null;
 let heading = null;
 let course = null;
+let motionPermission = 'prompt';
+const canAskForHeading = (navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches)
+  && typeof window.DeviceOrientationEvent?.requestPermission === 'function';
 
 function wrap(degrees) {
   return (degrees % 360 + 360) % 360;
@@ -58,9 +62,34 @@ function drawArrow() {
   const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
   const reference = heading === null ? (course ?? 0) : heading + screenAngle;
   arrow.setAttribute('transform', 'rotate(' + wrap(bearing - reference) + ')');
-  const mode = heading !== null ? phoneUp : course !== null ? courseUp : northUp;
+  let mode = heading !== null ? phoneUp : course !== null ? courseUp : northUp;
+  if (heading === null && motionPermission === 'denied') {
+    mode = 'ຍັງບໍ່ໄດ້ອະນຸຍາດໃຫ້ໃຊ້ທິດຂອງມືຖື. ' + mode;
+  } else if (heading === null && motionPermission === 'granted') {
+    mode = 'ຖືມືຖືໃຫ້ຮາບເພື່ອລໍຖ້າສັນຍານທິດ. ' + mode;
+  } else if (heading === null && motionPermission === 'retry') {
+    mode = 'ຍັງເປີດການໝຸນຕາມມືຖືບໍ່ໄດ້. ລອງກົດອີກຄັ້ງ. ' + mode;
+  }
   if (modeLine.textContent !== mode) modeLine.textContent = mode;
+  enableHeading.disabled = motionPermission === 'requesting';
+  enableHeading.hidden = !canAskForHeading || heading !== null
+    || motionPermission === 'granted' || motionPermission === 'denied';
 }
+
+enableHeading.addEventListener('click', async () => {
+  const session = trackingSession;
+  enableHeading.disabled = true;
+  motionPermission = 'requesting';
+  try {
+    const result = await window.DeviceOrientationEvent.requestPermission(true);
+    if (session !== trackingSession) return;
+    motionPermission = result === 'granted' ? 'granted' : 'denied';
+  } catch {
+    if (session !== trackingSession) return;
+    motionPermission = 'retry';
+  }
+  drawArrow();
+});
 
 function onOrientation(event) {
   if (Number.isFinite(event.webkitCompassHeading) && event.webkitCompassHeading >= 0
@@ -95,11 +124,13 @@ function releaseSensors() {
   heading = null;
   course = null;
   bearing = null;
+  motionPermission = 'prompt';
 }
 
 function showStatus(message, state = 'waiting') {
   reading.hidden = true;
   modeLine.hidden = true;
+  enableHeading.hidden = true;
   bearing = null;
   course = null;
   stage.dataset.state = state;

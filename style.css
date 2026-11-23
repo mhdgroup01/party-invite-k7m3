@@ -57,6 +57,8 @@ h1 span{color:var(--title-accent)}
 .guide-reading p,#route-mode{margin:0;overflow-wrap:anywhere}
 #location-status,#distance{font-size:var(--text-lg);font-weight:700}
 #bearing,#route-mode{font-size:var(--text-sm);color:var(--body-muted)}
+#enable-heading{min-height:var(--touch-min);padding:var(--space-1) var(--space-3);background:var(--panel-paper);color:var(--body-ink);border:var(--offset-press) solid currentColor;font-weight:700}
+#enable-heading:disabled{color:var(--body-muted)}
 .guidance .primary{width:100%;margin-block-start:var(--space-2)}
 @media(max-width:58rem){.lead{grid-template-columns:1fr;grid-template-areas:"guide" "cover"}.lead .cover{aspect-ratio:var(--cover-ratio)}.arrow-stage svg{width:min(100%,calc(var(--space-7)*2 + var(--space-6)))}.lead .hero{right:2%}}
 @media(max-width:47rem){.shell{padding-inline:var(--space-4)}.masthead{min-height:calc(var(--space-6) + var(--space-3))}.lead .cover{aspect-ratio:var(--cover-ratio-mobile)}.lead .hero{right:-1%;height:94%}.invitation{padding:var(--space-4)}.lettering{left:5%}.kicker{margin-bottom:var(--space-2)}.replay{bottom:var(--space-2);right:var(--space-2)}}
