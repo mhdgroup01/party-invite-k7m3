@@ -11,18 +11,13 @@ replay.hidden = false;
 replay.addEventListener('click', swing);
 swing();
 
-const nearby = document.querySelector('#nearby');
-const label = nearby.querySelector('span');
-const initialLabel = label.textContent;
-const panel = document.querySelector('#compass-panel');
-const reading = document.querySelector('#compass-reading');
+const stage = document.querySelector('#arrow-stage');
+const arrow = document.querySelector('#route-arrow');
+const reading = document.querySelector('#route-reading');
 const statusLine = document.querySelector('#location-status');
-const modeLine = document.querySelector('#compass-mode');
+const modeLine = document.querySelector('#route-mode');
 const bearingLine = document.querySelector('#bearing');
 const distanceLine = document.querySelector('#distance');
-const enableHeading = document.querySelector('#enable-heading');
-const needle = document.querySelector('#needle');
-const cardinals = document.querySelector('#cardinals');
 
 const mapURL = new URL(document.querySelector('#directions').href);
 const [eventLat, eventLon] = mapURL.searchParams.get('destination').split(',').map(Number);
@@ -30,14 +25,15 @@ const metersFormat = new Intl.NumberFormat('lo-LA', {maximumFractionDigits: 0});
 const kmFormat = new Intl.NumberFormat('lo-LA', {maximumFractionDigits: 1});
 const rad = Math.PI / 180;
 const directions = ['ເໜືອ', 'ຕາເວັນອອກສຽງເໜືອ', 'ຕາເວັນອອກ', 'ຕາເວັນອອກສຽງໃຕ້', 'ໃຕ້', 'ຕາເວັນຕົກສຽງໃຕ້', 'ຕາເວັນຕົກ', 'ຕາເວັນຕົກສຽງເໜືອ'];
-const northUp = 'ທິດເໜືອຢູ່ດ້ານເທິງຂອງໜ້າປັດ.';
-const live = 'ຖືມືຖືໃຫ້ຮາບ. ປາຍເຂັມສີແດງຊີ້ໄປຫາງານ.';
-const needsMotionPermission = typeof window.DeviceOrientationEvent?.requestPermission === 'function';
+const northUp = 'ດ້ານເທິງຂອງຈໍແມ່ນທິດເໜືອ.';
+const phoneUp = 'ຖືມືຖືໃຫ້ຮາບ. ລູກສອນຈະໝຸນຕາມມືຖື.';
+const courseUp = 'ດ້ານເທິງຂອງຈໍແມ່ນທິດທີ່ເຈົ້າກຳລັງເຄື່ອນທີ່.';
+const waiting = 'ກຳລັງຊອກຫາຕຳແໜ່ງຂອງເຈົ້າ…';
 let tracker = null;
 let trackingSession = 0;
 let bearing = null;
 let heading = null;
-let motionDenied = false;
+let course = null;
 
 function wrap(degrees) {
   return (degrees % 360 + 360) % 360;
@@ -57,13 +53,12 @@ function toEvent(latitude, longitude) {
   };
 }
 
-function drawCompass() {
+function drawArrow() {
   if (bearing === null) return;
   const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
-  const top = heading === null ? 0 : wrap(heading + screenAngle);
-  cardinals.setAttribute('transform', 'rotate(' + wrap(-top) + ')');
-  needle.setAttribute('transform', 'rotate(' + wrap(bearing - top) + ')');
-  const mode = heading !== null ? live : motionDenied ? 'ໃຊ້ທິດເໜືອອ້າງອີງ. ' + northUp : northUp;
+  const reference = heading === null ? (course ?? 0) : heading + screenAngle;
+  arrow.setAttribute('transform', 'rotate(' + wrap(bearing - reference) + ')');
+  const mode = heading !== null ? phoneUp : course !== null ? courseUp : northUp;
   if (modeLine.textContent !== mode) modeLine.textContent = mode;
 }
 
@@ -79,14 +74,14 @@ function onOrientation(event) {
     // ค่า alpha แบบสัมพัทธ์ไม่มีทิศเหนือเป็นจุดอ้างอิง
     return;
   }
-  drawCompass();
+  drawArrow();
 }
 
 function listenForHeading() {
   window.addEventListener('deviceorientationabsolute', onOrientation);
   window.addEventListener('deviceorientation', onOrientation);
-  window.screen.orientation?.addEventListener('change', drawCompass);
-  window.addEventListener('orientationchange', drawCompass);
+  window.screen.orientation?.addEventListener('change', drawArrow);
+  window.addEventListener('orientationchange', drawArrow);
 }
 
 function releaseSensors() {
@@ -95,24 +90,21 @@ function releaseSensors() {
   tracker = null;
   window.removeEventListener('deviceorientationabsolute', onOrientation);
   window.removeEventListener('deviceorientation', onOrientation);
-  window.screen.orientation?.removeEventListener('change', drawCompass);
-  window.removeEventListener('orientationchange', drawCompass);
+  window.screen.orientation?.removeEventListener('change', drawArrow);
+  window.removeEventListener('orientationchange', drawArrow);
   heading = null;
+  course = null;
   bearing = null;
 }
 
-function showStatus(message) {
+function showStatus(message, state = 'waiting') {
   reading.hidden = true;
+  modeLine.hidden = true;
   bearing = null;
+  course = null;
+  stage.dataset.state = state;
+  arrow.setAttribute('transform', 'rotate(32)');
   if (statusLine.textContent !== message) statusLine.textContent = message;
-}
-
-function closeCompass() {
-  releaseSensors();
-  panel.hidden = true;
-  showStatus('');
-  nearby.setAttribute('aria-expanded', 'false');
-  label.textContent = initialLabel;
 }
 
 function updatePosition(position) {
@@ -121,7 +113,7 @@ function updatePosition(position) {
   const distance = target.distance;
   if (distance + accuracy <= 100) {
     releaseSensors();
-    showStatus('ຮອດບ່ອນຈັດງານແລ້ວ! ມາເປົ່າທຽນນຳກັນເລີຍ!');
+    showStatus('ຮອດບ່ອນຈັດງານແລ້ວ! ມາເປົ່າທຽນນຳກັນເລີຍ!', 'arrived');
     swing();
     return;
   }
@@ -129,6 +121,9 @@ function updatePosition(position) {
     showStatus('ຕຳແໜ່ງຍັງບໍ່ຊັດເຈນ. ລອງອອກໄປບ່ອນໂລ່ງ ຫຼື ເບິ່ງໝຸດໃນ Google Maps.');
     return;
   }
+  const {heading: travelHeading, speed} = position.coords;
+  course = Number.isFinite(travelHeading) && travelHeading >= 0 && travelHeading < 360 && speed !== 0
+    ? travelHeading : null;
   bearing = target.bearing;
   const cardinal = directions[Math.round(bearing / 45) % directions.length];
   const distanceText = distance < 1000
@@ -138,61 +133,36 @@ function updatePosition(position) {
   const distanceLabel = 'ໄລຍະທາງເສັ້ນຊື່ ' + distanceText;
   if (bearingLine.textContent !== bearingText) bearingLine.textContent = bearingText;
   if (distanceLine.textContent !== distanceLabel) distanceLine.textContent = distanceLabel;
-  const firstReading = reading.hidden;
   statusLine.textContent = '';
   reading.hidden = false;
-  drawCompass();
-  if (firstReading && document.activeElement === nearby) panel.scrollIntoView({block: 'nearest'});
+  modeLine.hidden = false;
+  stage.dataset.state = 'active';
+  drawArrow();
 }
 
-enableHeading.addEventListener('click', async () => {
-  const session = trackingSession;
-  enableHeading.disabled = true;
-  try {
-    const result = await window.DeviceOrientationEvent.requestPermission(true);
-    if (session !== trackingSession) return;
-    if (result === 'granted') listenForHeading();
-    else motionDenied = true;
-  } catch {
-    if (session === trackingSession) motionDenied = true;
-  } finally {
-    if (session === trackingSession) {
-      enableHeading.hidden = true;
-      drawCompass();
-    }
-  }
-});
-
-nearby.hidden = false;
-nearby.addEventListener('click', () => {
-  if (!panel.hidden) {
-    closeCompass();
+function startNavigation() {
+  if (!window.isSecureContext || !navigator.geolocation) {
+    showStatus('ອຸປະກອນນີ້ອ່ານຕຳແໜ່ງບໍ່ໄດ້. ເປີດ Google Maps ເພື່ອເບິ່ງເສັ້ນທາງ.');
     return;
   }
-  panel.hidden = false;
-  nearby.setAttribute('aria-expanded', 'true');
-  label.textContent = 'ປິດເຂັມທິດ';
-  if (!window.isSecureContext || !navigator.geolocation) {
-    showStatus('ອຸປະກອນນີ້ອ່ານຕຳແໜ່ງບໍ່ໄດ້. ກົດປຸ່ມ Google Maps ເພື່ອເບິ່ງເສັ້ນທາງ.');
-  } else {
-    const session = ++trackingSession;
-    enableHeading.hidden = !needsMotionPermission;
-    enableHeading.disabled = false;
-    motionDenied = false;
-    showStatus('ກຳລັງຊອກຫາຕຳແໜ່ງຂອງເຈົ້າ…');
-    if (!needsMotionPermission) listenForHeading();
-    tracker = navigator.geolocation.watchPosition(position => {
-      if (session === trackingSession) updatePosition(position);
-    }, error => {
-      if (session !== trackingSession) return;
-      if (error.code === 1) {
-        releaseSensors();
-        showStatus('ກະລຸນາອະນຸຍາດໃຫ້ເວັບໃຊ້ຕຳແໜ່ງເພື່ອເປີດເຂັມທິດ ຫຼື ກົດ Google Maps ເພື່ອເບິ່ງເສັ້ນທາງ.');
-      } else {
-        showStatus('ກຳລັງລໍຖ້າສັນຍານຕຳແໜ່ງ. ເຈົ້າເປີດ Google Maps ເພື່ອນຳທາງໄດ້ເລີຍ.');
-      }
-    }, {enableHighAccuracy: true, maximumAge: 0, timeout: 15000});
-  }
-  panel.scrollIntoView({block: 'nearest'});
+  const session = ++trackingSession;
+  showStatus(waiting);
+  listenForHeading();
+  tracker = navigator.geolocation.watchPosition(position => {
+    if (session === trackingSession) updatePosition(position);
+  }, error => {
+    if (session !== trackingSession) return;
+    if (error.code === 1) {
+      releaseSensors();
+      showStatus('ເວັບໃຊ້ຕຳແໜ່ງບໍ່ໄດ້. ເປີດ Google Maps ເພື່ອໄປງານໄດ້ເລີຍ.');
+    } else {
+      showStatus('ກຳລັງລໍຖ້າສັນຍານຕຳແໜ່ງ. ເຈົ້າເປີດ Google Maps ເພື່ອນຳທາງໄດ້ເລີຍ.');
+    }
+  }, {enableHighAccuracy: true, maximumAge: 0, timeout: 15000});
+}
+
+window.addEventListener('pagehide', releaseSensors);
+window.addEventListener('pageshow', event => {
+  if (event.persisted) startNavigation();
 });
-window.addEventListener('pagehide', closeCompass);
+startNavigation();
